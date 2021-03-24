@@ -3,6 +3,7 @@
   session_start();
 
   require 'config/db.php';
+  require_once 'emailController.php';
 
   $errors = array();
   $username = "";
@@ -65,6 +66,8 @@
         $_SESSION['username'] = $username;
         $_SESSION['email'] = $email;
         $_SESSION['verified'] = $verified;
+
+        sendVerificationEmail($email, $token);
         
         //set flash messge
         $_SESSION['message'] = "You are now logged in!";
@@ -140,4 +143,33 @@
     unset($_SESSION['verified']);
     header('location: login.php');
     exit();
+  }
+
+  //Verify user by token
+  function verifyUser($token) {
+    global $conn;
+    $sql = "SELECT * FROM users WHERE token='$token' LIMIT 1";
+    $result = mysqli_query($conn, $sql);
+
+    if (mysqli_num_rows($result) > 0) {
+      $user = mysqli_fetch_assoc($result);
+      $updateQuery = "UPDATE users SET verified=1 WHERE token='$token'";
+
+      if (mysqli_query($conn, $updateQuery)) {
+        //log user in
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['verified'] = 1;
+  
+        //set flash messge
+        $_SESSION['message'] = "Your email was successfully verified!";
+        $_SESSION['alert-class'] = "alert-success";
+        header('location: index.php');
+        exit();
+      }
+    } else {
+      echo 'User not found';
+    }
+
   }
