@@ -1,3 +1,12 @@
+<?php
+  require_once 'controllers/authController.php';
+
+  if (!isset($_SESSION['id'])) {
+    header('location: login.php');
+    exit();
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,21 +25,29 @@
     <div class="row">
       <div class="col-md-4 offset-md-4 form-div login">
 
-        <div class="alert alert-success">
-          You are now logged in!
-        </div>
+        <?php if(isset($_SESSION['message'])): ?>
+          <div class="alert <?php echo $_SESSION['alert-class']; ?>">
+            <?php
+              echo $_SESSION['message'];
+              unset($_SESSION['message']); 
+              unset($_SESSION['alert-class']);
+            ?>
+          </div>
+        <?php endif; ?>
 
-        <h3>Welcome, El Pacific</h3>
+        <h3>Welcome, <?php echo $_SESSION['username']; ?></h3>
 
-        <a href="#" class="logout">Logout</a>
+        <a href="index.php?logout=1" class="logout">Logout</a>
 
-        <div class="alert alert-warning">
-          You need to verify your account.
-          Go to your email account and click on the verification link we just emailed you at
-          <strong>elpacificmb@gmail.com</strong>
-        </div>
-
-        <button class="btn btn-primary w-100 btn-lg">I am verified</button>
+        <?php if(!$_SESSION['verified']): ?>
+          <div class="alert alert-warning">
+            You need to verify your account.
+            Go to your email account and click on the verification link we just emailed you at
+            <strong><?php echo $_SESSION['email']; ?></strong>
+          </div>
+        <?php else: ?>
+          <button class="btn btn-primary w-100 btn-lg">I am verified</button>
+        <?php endif; ?>
 
       </div>
     </div>
