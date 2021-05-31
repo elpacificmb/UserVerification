@@ -116,7 +116,10 @@
           $_SESSION['username'] = $user['username'];
           $_SESSION['email'] = $user['email'];
           $_SESSION['verified'] = $user['verified'];
-  
+
+          //Login Timeout session
+          $_SESSION['login_time'] = time();
+
           //set flash messge
           $_SESSION['message'] = "You are now logged in!";
           $_SESSION['alert-class'] = "alert-success";
@@ -136,12 +139,14 @@
 
   //Logout user
   if (isset($_GET['logout'])) {
+    session_unset();
     session_destroy();
     unset($_SESSION['id']);
     unset($_SESSION['username']);
     unset($_SESSION['email']);
     unset($_SESSION['verified']);
     header('location: login.php');
+    $errors['message'] = "Session has expired";
     exit();
   }
 

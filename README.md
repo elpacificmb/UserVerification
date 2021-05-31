@@ -29,3 +29,7 @@ Enter EMAIL:
 And PASSWORD:
 for your sender email account.
 then In your email account go to security and tun on less secure app access.
+
+## Test account
+username: ken
+password: ken123
